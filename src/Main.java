@@ -17,6 +17,7 @@ final class Main {
         while (newStringInputData.size() <= 5 && !newInputData.ready()) {
             while ((System.currentTimeMillis() - startTime) < timeoutNoMoreThan * 1000
                     && !newInputData.ready()) {
+
             }
             if (newInputData.ready()) {
                 newStringInputData.add(newInputData.readLine());
