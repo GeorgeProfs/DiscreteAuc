@@ -14,7 +14,7 @@ final class Main {
         int timeoutNoMoreThan = 100; // Last Input Lasts No More Than 10 Seconds
         long startTime = System.currentTimeMillis();
 
-        while (newStringInputData.size() <= 2 && !newInputData.ready()) {
+        while (newStringInputData.size() <= 5 && !newInputData.ready()) {
             while ((System.currentTimeMillis() - startTime) < timeoutNoMoreThan * 1000
                     && !newInputData.ready()) {
 
@@ -25,39 +25,43 @@ final class Main {
             } else break;
         }
 
-        String[] strArray;
-        String element;
-        String result;
-        int number2;
-        float number1;
-        char var;
+        String[] arrayOfUserInputInformation;
+        String oneLineOfUserInput;
+        int quantityInRequest;
+        int oldQuantityInRequest;
+        float priceInRequest;
+        char typeOfRequest;
 
         for (int i = 0; i < newStringInputData.size(); i++) {
 
-            element = newStringInputData.get(i);
+            oneLineOfUserInput = newStringInputData.get(i);
 
-            System.out.println(element);
+            arrayOfUserInputInformation = oneLineOfUserInput.split(" ");
 
-            strArray = element.split(" ");
+            oneLineOfUserInput = arrayOfUserInputInformation[0];
 
-            result = strArray[0];
+            typeOfRequest = oneLineOfUserInput.charAt(0);
 
-            var = result.charAt(0);
+            if (typeOfRequest == 'B') {
 
-            if (var == 'B') {
+                quantityInRequest = Integer.parseInt(arrayOfUserInputInformation[1]);
+                priceInRequest = Float.parseFloat(arrayOfUserInputInformation[2]);
 
-                number2 = Integer.parseInt(strArray[1]);
-                number1 = Float.parseFloat(strArray[2]);
-
-                if ((number1 >= 0.01 && number1 <= 100.00) && (number2 >= 1 && number2 <= 1000)) {
-                    requestToBuy.put(number1, number2);
+                if ((priceInRequest >= 0.01 && priceInRequest <= 100.00) && (quantityInRequest >= 1 && quantityInRequest <= 1000)) {
+                    if (requestToBuy.containsKey(priceInRequest)) {
+                        oldQuantityInRequest = Integer.parseInt(requestToBuy.get(priceInRequest).toString());
+                        requestToBuy.replace(priceInRequest, oldQuantityInRequest + quantityInRequest);
+                    } else requestToBuy.put(priceInRequest, quantityInRequest);
                 }
-            } else if (var == 'S') {
+            } else if (typeOfRequest == 'S') {
 
-                number2 = Integer.parseInt(strArray[1]);
-                number1 = Float.parseFloat(strArray[2]);
-                if ((number1 >= 0.01 && number1 <= 100.00) && (number2 >= 1 && number2 <= 1000)) {
-                    requestToSell.put(number1, number2);
+                quantityInRequest = Integer.parseInt(arrayOfUserInputInformation[1]);
+                priceInRequest = Float.parseFloat(arrayOfUserInputInformation[2]);
+                if ((priceInRequest >= 0.01 && priceInRequest <= 100.00) && (quantityInRequest >= 1 && quantityInRequest <= 1000)) {
+                    if (requestToSell.containsKey(priceInRequest)) {
+                        oldQuantityInRequest = Integer.parseInt(requestToSell.get(priceInRequest).toString());
+                        requestToSell.replace(priceInRequest, oldQuantityInRequest + quantityInRequest);
+                    } else requestToSell.put(priceInRequest, quantityInRequest);
                 }
             }
         }
@@ -69,7 +73,7 @@ final class Main {
         int mapSellQuantity;
 
         for (Map.Entry mapBuy : requestToBuy.entrySet()) {
-            //System.out.println(mapBuy.getKey() + " " + mapBuy.getValue());
+            System.out.println(mapBuy.getKey() + " " + mapBuy.getValue());
             mapBuyKeyPrice = Float.parseFloat(mapBuy.getKey().toString());
             for (Map.Entry mapSell : requestToSell.entrySet()) {
                 //    System.out.println(mapSell.getKey() + " " + mapSell.getValue());
@@ -77,17 +81,19 @@ final class Main {
                 if (mapBuyKeyPrice >= mapSellKeyPrice) {
                     mapBuyQuantity = Integer.parseInt(mapBuy.getValue().toString());
                     mapSellQuantity = Integer.parseInt(mapSell.getValue().toString());
-                    if (mapBuyQuantity - mapSellQuantity == 0) {
-                        newStringInputData.add(mapSellQuantity + " " + mapSellKeyPrice);
-                        requestToBuy.remove(mapBuyKeyPrice, mapBuyQuantity);
-                        requestToSell.remove(mapSellKeyPrice, mapSellQuantity);
-                        break;
-                    } else if (mapBuyQuantity - mapSellQuantity < 0) {
+                    if (mapBuyQuantity != 0 && mapSellQuantity != 0) {
+                        if (mapBuyQuantity - mapSellQuantity == 0) {
+                            newStringInputData.add(mapSellQuantity + " " + mapSellKeyPrice);
+                            requestToBuy.replace(mapBuyKeyPrice, mapBuyQuantity, 0);
+                            requestToBuy.replace(mapSellKeyPrice, mapSellQuantity, 0);
+                            break;
+                        } else if (mapBuyQuantity - mapSellQuantity < 0) {
 
-                    } else {
+                        } else {
 
-                    }
-                } else break;
+                        }
+                    } else break;
+                }
             }
         }
 
