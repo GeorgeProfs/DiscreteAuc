@@ -14,7 +14,7 @@ final class Main {
         int timeoutNoMoreThan = 100; // Last Input Lasts No More Than 10 Seconds
         long startTime = System.currentTimeMillis();
 
-        while (newStringInputData.size() <= 5 && !newInputData.ready()) {
+        while (newStringInputData.size() <= 2 && !newInputData.ready()) {
             while ((System.currentTimeMillis() - startTime) < timeoutNoMoreThan * 1000
                     && !newInputData.ready()) {
 
@@ -63,34 +63,37 @@ final class Main {
         }
         newStringInputData.clear();
 
-        for(Map.Entry e : requestToBuy.entrySet()){
-            System.out.println(e.getKey()+" "+ e.getValue());
-        }
+        float mapBuyKeyPrice;
+        int mapBuyQuantity;
+        float mapSellKeyPrice;
+        int mapSellQuantity;
 
-        for(Map.Entry e : requestToSell.entrySet()){
-            System.out.println(e.getKey()+" "+ e.getValue());
-        }
+        for (Map.Entry mapBuy : requestToBuy.entrySet()) {
+            //System.out.println(mapBuy.getKey() + " " + mapBuy.getValue());
+            mapBuyKeyPrice = Float.parseFloat(mapBuy.getKey().toString());
+            for (Map.Entry mapSell : requestToSell.entrySet()) {
+                //    System.out.println(mapSell.getKey() + " " + mapSell.getValue());
+                mapSellKeyPrice = Float.parseFloat(mapSell.getKey().toString());
+                if (mapBuyKeyPrice >= mapSellKeyPrice) {
+                    mapBuyQuantity = Integer.parseInt(mapBuy.getValue().toString());
+                    mapSellQuantity = Integer.parseInt(mapSell.getValue().toString());
+                    if (mapBuyQuantity - mapSellQuantity == 0) {
+                        newStringInputData.add(mapSellQuantity + " " + mapSellKeyPrice);
+                        requestToBuy.remove(mapBuyKeyPrice, mapBuyQuantity);
+                        requestToSell.remove(mapSellKeyPrice, mapSellQuantity);
+                        break;
+                    } else if (mapBuyQuantity - mapSellQuantity < 0) {
 
+                    } else {
 
-/*
-        System.out.println((newStringInputData.size()));
-
-        for (int i = 1; i < newStringInputData.toArray().length; i++) {
-
-            int result = Integer.parseInt(Arrays.toString(newStringInputData.get(i)));
-            System.out.println(result);
-        }
-
-
-        for(int i = 1; i < newStringInputData.size(); i++) {
-            for (int j = 1; j < newStringInputData.indexOf(args[args.length - 1]); j++) {
-
-                int result = Integer.parseInt(Arrays.toString(newStringInputData.get(j)));
-                System.out.println(result);
+                    }
+                } else break;
             }
         }
-        
 
-*/
+        for (int i = 0; i < newStringInputData.size(); i++) {
+            System.out.println(newStringInputData.get(i));
+        }
+
     }
 }
