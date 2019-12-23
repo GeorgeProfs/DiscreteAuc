@@ -11,10 +11,10 @@ final class Main {
         List<String> newStringInputData = new ArrayList<>();
         Map<Float, Integer> requestToBuy = new TreeMap<>();
         Map<Float, Integer> requestToSell = new TreeMap<>();
-        int timeoutNoMoreThan = 100; // Last Input Lasts No More Than 10 Seconds
+        int timeoutNoMoreThan = 13; // Last Input Lasts No More Than 10 Seconds
         long startTime = System.currentTimeMillis();
 
-        while (newStringInputData.size() <= 5 && !newInputData.ready()) {
+        while (newStringInputData.size() <= 3 && !newInputData.ready()) {
             while ((System.currentTimeMillis() - startTime) < timeoutNoMoreThan * 1000
                     && !newInputData.ready()) {
 
@@ -72,34 +72,39 @@ final class Main {
         float mapSellKeyPrice;
         int mapSellQuantity;
 
-        for (Map.Entry mapBuy : requestToBuy.entrySet()) {
-            System.out.println(mapBuy.getKey() + " " + mapBuy.getValue());
-            mapBuyKeyPrice = Float.parseFloat(mapBuy.getKey().toString());
-            for (Map.Entry mapSell : requestToSell.entrySet()) {
-                //    System.out.println(mapSell.getKey() + " " + mapSell.getValue());
-                mapSellKeyPrice = Float.parseFloat(mapSell.getKey().toString());
+        for (Map.Entry<Float, Integer> mapBuy : requestToBuy.entrySet()) {
+            mapBuyKeyPrice = mapBuy.getKey();
+            for (Map.Entry<Float, Integer> mapSell : requestToSell.entrySet()) {
+                mapSellKeyPrice = mapSell.getKey();
                 if (mapBuyKeyPrice >= mapSellKeyPrice) {
-                    mapBuyQuantity = Integer.parseInt(mapBuy.getValue().toString());
-                    mapSellQuantity = Integer.parseInt(mapSell.getValue().toString());
-                    if (mapBuyQuantity != 0 && mapSellQuantity != 0) {
+                    mapBuyQuantity = mapBuy.getValue();
+                    mapSellQuantity = mapSell.getValue();
+                    if (mapBuyQuantity != 0 || mapSellQuantity != 0) {
                         if (mapBuyQuantity - mapSellQuantity == 0) {
                             newStringInputData.add(mapSellQuantity + " " + mapSellKeyPrice);
                             requestToBuy.replace(mapBuyKeyPrice, mapBuyQuantity, 0);
-                            requestToBuy.replace(mapSellKeyPrice, mapSellQuantity, 0);
+                            requestToSell.replace(mapSellKeyPrice, mapSellQuantity, 0);
                             break;
                         } else if (mapBuyQuantity - mapSellQuantity < 0) {
-
-                        } else {
-
+                            newStringInputData.add(mapBuyQuantity + " " + mapSellKeyPrice);
+                            requestToBuy.replace(mapBuyKeyPrice, mapBuyQuantity, 0);
+                            break;
+                        } else if (mapBuyQuantity - mapSellQuantity > 0) {
+                            newStringInputData.add(mapSellQuantity + " " + mapSellKeyPrice);
+                            requestToBuy.replace(mapBuyKeyPrice, mapBuyQuantity, mapBuyQuantity - mapSellQuantity);
+                            requestToSell.replace(mapSellKeyPrice, mapSellQuantity, 0);
+                            break;
                         }
                     } else break;
                 }
             }
         }
 
-        for (int i = 0; i < newStringInputData.size(); i++) {
-            System.out.println(newStringInputData.get(i));
-        }
+        if (!newStringInputData.isEmpty()) {
+            for (int i = 0; i < newStringInputData.size(); i++) {
+                System.out.println(newStringInputData.get(i));
+            }
+        } else System.out.println("0 n/a");
 
     }
 }
