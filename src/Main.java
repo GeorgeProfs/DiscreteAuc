@@ -14,7 +14,7 @@ final class Main {
         int timeoutNoMoreThan = 13; // Last Input Lasts No More Than 10 Seconds
         long startTime = System.currentTimeMillis();
 
-        while (newStringInputData.size() <= 3 && !newInputData.ready()) {
+        while (newStringInputData.size() <= 1_000_000 && !newInputData.ready()) {
             while ((System.currentTimeMillis() - startTime) < timeoutNoMoreThan * 1000
                     && !newInputData.ready()) {
 
